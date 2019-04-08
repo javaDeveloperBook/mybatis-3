@@ -15,15 +15,15 @@
  */
 package org.apache.ibatis.session;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
-
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
 
 /**
  * Builds {@link SqlSession} instances.
@@ -44,9 +44,26 @@ public class SqlSessionFactoryBuilder {
     return build(reader, null, properties);
   }
 
+  /**
+   * 构造 SqlSessionFactory 对象
+   * @param reader Reader 对象
+   * @param environment 环境
+   * @param properties Properties 变量
+   * @return
+   */
   public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
     try {
+      /*
+        创建 XMLConfigBuilder 对象
+        XMLConfigBuilder 类是对 mybatis 的配置文件进行解析的类，
+        解析后的信息存放在 Configuration 对象( Configuration 对象会贯穿整个 mybatis 的执行流程，
+        为 mybatis 的执行过程提供各种需要的配置信息)中
+       */
       XMLConfigBuilder parser = new XMLConfigBuilder(reader, environment, properties);
+      /*
+        1. 执行 XML 解析
+        2. 创建 DefaultSqlSessionFactory 对象。
+       */
       return build(parser.parse());
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error building SqlSession.", e);

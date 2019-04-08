@@ -121,6 +121,10 @@ public class TypeAliasRegistry {
     }
   }
 
+  /**
+   * 注册包名下的所有别名类
+   * @param packageName 包名
+   */
   public void registerAliases(String packageName) {
     registerAliases(packageName, Object.class);
   }

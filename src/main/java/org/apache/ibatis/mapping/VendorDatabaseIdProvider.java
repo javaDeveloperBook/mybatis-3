@@ -28,6 +28,7 @@ import org.apache.ibatis.logging.LogFactory;
 
 /**
  * Vendor DatabaseId provider.
+ * 厂商 DatabaseId 的提供者。
  *
  * It returns database product name as a databaseId.
  * If the user provides a properties it uses it to translate database product name
@@ -35,10 +36,18 @@ import org.apache.ibatis.logging.LogFactory;
  * It can return null, if no database product name or
  * a properties was specified and no translation was found.
  *
+ * 它将数据库产品名称作为 databaseId 返回。
+ * 如果用户提供了一个属性，它使用它来翻译数据库产品名称 key =“Microsoft SQL Server”，
+ * 则value =“ms”将返回“ms”。 如果未指定数据库产品名称或属性且未找到转换，
+ * 则它可以返回null。
+ *
  * @author Eduardo Macarron
  */
 public class VendorDatabaseIdProvider implements DatabaseIdProvider {
 
+  /**
+   * Properties 对象
+   */
   private Properties properties;
 
   @Override
@@ -47,6 +56,7 @@ public class VendorDatabaseIdProvider implements DatabaseIdProvider {
       throw new NullPointerException("dataSource cannot be null");
     }
     try {
+      // 获得数据库标识
       return getDatabaseName(dataSource);
     } catch (Exception e) {
       LogHolder.log.error("Could not get a databaseId from dataSource", e);
@@ -60,9 +70,12 @@ public class VendorDatabaseIdProvider implements DatabaseIdProvider {
   }
 
   private String getDatabaseName(DataSource dataSource) throws SQLException {
+    // 获得数据库产品名
     String productName = getDatabaseProductName(dataSource);
+    // 如果 properties 不为 null，则遍历 properties 查找 productName 对应的 value
     if (this.properties != null) {
       for (Map.Entry<Object, Object> property : properties.entrySet()) {
+        // 如果产品名包含 KEY ，则返回对应的 VALUE
         if (productName.contains((String) property.getKey())) {
           return (String) property.getValue();
         }
@@ -70,14 +83,24 @@ public class VendorDatabaseIdProvider implements DatabaseIdProvider {
       // no match, return null
       return null;
     }
+    // 不存在 properties ，则直接返回 productName
     return productName;
   }
 
+  /**
+   * 获得数据库产品名
+   * @param dataSource 数据源
+   * @return 数据库产品名
+   * @throws SQLException
+   */
   private String getDatabaseProductName(DataSource dataSource) throws SQLException {
     Connection con = null;
     try {
+      // 获得数据库连接
       con = dataSource.getConnection();
+      // 获取数据库元数据相关信息的接口
       DatabaseMetaData metaData = con.getMetaData();
+      // 返回数据库产品名
       return metaData.getDatabaseProductName();
     } finally {
       if (con != null) {

@@ -15,9 +15,18 @@
  */
 package org.apache.ibatis.mapping;
 
+import com.sun.xml.internal.bind.v2.model.core.ID;
+
 /**
  * @author Clinton Begin
  */
 public enum ResultFlag {
-  ID, CONSTRUCTOR
+  /**
+   * ID
+   */
+  ID,
+  /**
+   * 构造方法
+   */
+  CONSTRUCTOR
 }

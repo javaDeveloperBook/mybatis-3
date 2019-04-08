@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jack.read.UserMapper">
+    <select id="queryUsers" resultMap="results">
+        select * from t_users
+    </select>
+    <!--<cache-ref namespace="" />-->
+
+    <!--<cache type="" flushInterval="" />-->
+
+    <!--<parameterMap id="id" type="java.lang.Long"/>-->
+    
+    <!--<sql id="query" >-->
+        <!--SELECT * FROM t_users;-->
+    <!--</sql>-->
+
+    <resultMap type="com.jack.read.User" id="results">
+        <id column="id" property="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+</mapper>

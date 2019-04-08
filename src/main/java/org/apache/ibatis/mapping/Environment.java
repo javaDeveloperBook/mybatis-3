@@ -15,16 +15,27 @@
  */
 package org.apache.ibatis.mapping;
 
-import javax.sql.DataSource;
-
 import org.apache.ibatis.transaction.TransactionFactory;
 
+import javax.sql.DataSource;
+
 /**
+ * DB 环境
  * @author Clinton Begin
  */
 public final class Environment {
+  /**
+   * 环境编号
+   * 即 mybatis-config.xml 配置文件 <environment> 标签 id 属性
+   */
   private final String id;
+  /**
+   * TransactionFactory 对象
+   */
   private final TransactionFactory transactionFactory;
+  /**
+   * DataSource 对象
+   */
   private final DataSource dataSource;
 
   public Environment(String id, TransactionFactory transactionFactory, DataSource dataSource) {
@@ -42,9 +53,21 @@ public final class Environment {
     this.dataSource = dataSource;
   }
 
+  /**
+   * 构造器
+   */
   public static class Builder {
+    /**
+     * 环境编号
+     */
     private String id;
+    /**
+     * TransactionFactory 对象
+     */
     private TransactionFactory transactionFactory;
+    /**
+     * DataSource 对象
+     */
     private DataSource dataSource;
 
     public Builder(String id) {

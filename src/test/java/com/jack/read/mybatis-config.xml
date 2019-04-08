@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <properties>
+        <property name="test" value="test" />
+    </properties>
+    <settings>
+        <setting name="logImpl" value="NO_LOGGING"/>
+        <!--<setting name="12" value="122"/>-->
+    </settings>
+    
+    <typeAliases>
+        <typeAlias type="com.jack.read.User" alias="User"/>
+    </typeAliases>
+
+    <objectFactory type="com.jack.read.UserObjectFactory">
+        <property name="name" value="${userObjectFactory:name?:default}"/>
+    </objectFactory>
+
+    <objectWrapperFactory type="com.jack.read.UserObjectWrapperFactory"/>
+
+    <plugins>
+        <plugin interceptor="com.jack.read.UserPlugin">
+            <property name="pluginProperty" value="100"/>
+        </plugin>
+    </plugins>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC">
+                <property name="" value="" />
+            </transactionManager>
+            <dataSource type="UNPOOLED">
+                <property name="driver" value="org.hsqldb.jdbcDriver" />
+                <property name="url" value="jdbc:hsqldb:mem:cursor_simple" />
+                <property name="username" value="sa" />
+            </dataSource>
+        </environment>
+    </environments>
+    
+    <!--<databaseIdProvider type=""/>-->
+
+    <mappers>
+        <mapper resource="com/jack/read/UserMapper.xml"/>
+    </mappers>
+
+    <!--<typeHandlers>-->
+        <!--<package name=""-->
+        <!--<typeHandler handler="" />-->
+    <!--</typeHandlers>-->
+
+</configuration>

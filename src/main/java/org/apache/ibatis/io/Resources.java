@@ -118,6 +118,7 @@ public class Resources {
 
   /**
    * Returns a resource on the classpath as a Properties object
+   * 作为 Properties 对象返回类路径上的资源
    *
    * @param resource The resource to find
    * @return The resource
@@ -237,6 +238,7 @@ public class Resources {
 
   /**
    * Gets a URL as a Properties object
+   * 获取 URL资源 作为 Properties对象
    *
    * @param urlString - the URL to get
    * @return A Properties object with the data from the URL
