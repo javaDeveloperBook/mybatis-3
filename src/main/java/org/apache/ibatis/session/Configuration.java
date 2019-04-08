@@ -111,6 +111,10 @@ public class Configuration {
   protected boolean multipleResultSetsEnabled = true;
   protected boolean useGeneratedKeys;
   protected boolean useColumnLabel = true;
+  /**
+   * 通过在 mybatis-config.xml 中，配置如下开启二级缓存功能
+   * <setting name="cacheEnabled" value="true"/>
+   */
   protected boolean cacheEnabled = true;
   protected boolean callSettersOnNulls;
   protected boolean useActualParamName = true;
@@ -158,6 +162,9 @@ public class Configuration {
   protected final InterceptorChain interceptorChain = new InterceptorChain();
   protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+  /**
+   * LanguageDriverRegistry 对象
+   */
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
   /**
@@ -170,6 +177,12 @@ public class Configuration {
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
       .conflictMessageProducer((savedValue, targetValue) ->
           ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
+  /**
+   * Cache 对象集合
+   *
+   * KEY：命名空间 namespace
+   * VALUE: MappedStatement 中的 cache 属性
+   */
   protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
   protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
   protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
@@ -239,6 +252,9 @@ public class Configuration {
     typeAliasRegistry.registerAlias("CGLIB", CglibProxyFactory.class);
     typeAliasRegistry.registerAlias("JAVASSIST", JavassistProxyFactory.class);
 
+    /**
+     * 注册到 languageRegistry 中,默认情况下，使用 XMLLanguageDriver 类,还注册 RawLanguageDriver
+     */
     languageRegistry.setDefaultDriverClass(XMLLanguageDriver.class);
     languageRegistry.register(RawLanguageDriver.class);
   }
@@ -576,10 +592,10 @@ public class Configuration {
    */
   public LanguageDriver getLanguageDriver(Class<? extends LanguageDriver> langClass) {
     if (langClass == null) {
-      // langClass 如果为空，则使用默认类
+      // langClass 如果为空，则使用默认类，这里默认是 XMLLanguageDriver
       return languageRegistry.getDefaultDriver();
     }
-    // 获得 LanguageDriver 对象
+    // 先注册到 languageRegistry 中，获得 LanguageDriver 对象
     languageRegistry.register(langClass);
     return languageRegistry.getDriver(langClass);
   }
@@ -619,9 +635,19 @@ public class Configuration {
     return newExecutor(transaction, defaultExecutorType);
   }
 
+  /**
+   *  创建 Executor 对象
+   * @param transaction 事务对象
+   * @param executorType 执行器类型
+   * @return Executor 对象
+   */
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
-    executorType = executorType == null ? defaultExecutorType : executorType;
-    executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
+    // 获得执行器类型
+    // 可以通过在 mybatis-config.xml 配置文件配置
+    // value 有三种类型：SIMPLE REUSE BATCH ，<setting name="defaultExecutorType" value="" />
+    executorType = executorType == null ? defaultExecutorType : executorType;// 使用默认
+    executorType = executorType == null ? ExecutorType.SIMPLE : executorType; // 使用 ExecutorType.SIMPLE
+    // 创建对应实现的 Executor 对象
     Executor executor;
     if (ExecutorType.BATCH == executorType) {
       executor = new BatchExecutor(this, transaction);
@@ -630,9 +656,11 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
+    // 如果开启缓存，创建 CachingExecutor 对象，进行包装
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
+    // 应用插件
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }

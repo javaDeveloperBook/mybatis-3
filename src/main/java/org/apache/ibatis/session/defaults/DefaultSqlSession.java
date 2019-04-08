@@ -288,6 +288,7 @@ public class DefaultSqlSession implements SqlSession {
 
   @Override
   public <T> T getMapper(Class<T> type) {
+    // 从 configuration 对象 mapperRegistry 中取出动态代理工厂类（ Map<Class<?>, MapperProxyFactory<?>> ）
     return configuration.getMapper(type, this);
   }
 

@@ -19,5 +19,16 @@ package org.apache.ibatis.session;
  * @author Clinton Begin
  */
 public enum ExecutorType {
-  SIMPLE, REUSE, BATCH
+  /**
+   * org.apache.ibatis.executor.SimpleExecutor
+   */
+  SIMPLE,
+  /**
+   * org.apache.ibatis.executor.ReuseExecutor
+   */
+  REUSE,
+  /**
+   * org.apache.ibatis.executor.BatchExecutor
+   */
+  BATCH
 }

@@ -31,24 +31,47 @@ import org.apache.ibatis.session.Configuration;
  */
 public class DynamicContext {
 
+  /**
+   *  _parameter 的键，参数
+   */
   public static final String PARAMETER_OBJECT_KEY = "_parameter";
+  /**
+   * _databaseId 的键，数据库编号
+   */
   public static final String DATABASE_ID_KEY = "_databaseId";
 
   static {
+    // 设置 OGNL 的属性访问器
     OgnlRuntime.setPropertyAccessor(ContextMap.class, new ContextAccessor());
   }
 
+  /**
+   * 上下文的参数集合
+   */
   private final ContextMap bindings;
+  /**
+   * 生成后的 SQL
+   */
   private final StringJoiner sqlBuilder = new StringJoiner(" ");
+  /**
+   * 唯一编号。在  org.apache.ibatis.scripting.xmltags.XMLScriptBuilder.ForEachHandler 使用
+   */
   private int uniqueNumber = 0;
 
+  /**
+   * 当需要使用到 OGNL 表达式时，parameterObject 非空
+   * @param configuration
+   * @param parameterObject
+   */
   public DynamicContext(Configuration configuration, Object parameterObject) {
+    // 初始化 bindings 参数
     if (parameterObject != null && !(parameterObject instanceof Map)) {
       MetaObject metaObject = configuration.newMetaObject(parameterObject);
       bindings = new ContextMap(metaObject);
     } else {
       bindings = new ContextMap(null);
     }
+    // 添加 bindings 的默认值
     bindings.put(PARAMETER_OBJECT_KEY, parameterObject);
     bindings.put(DATABASE_ID_KEY, configuration.getDatabaseId());
   }
